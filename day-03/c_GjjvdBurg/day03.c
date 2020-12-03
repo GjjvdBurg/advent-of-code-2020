@@ -98,7 +98,7 @@ int tree_count(struct Field *F, int right, int down)
 	int r = 0,
 	    c = 0,
 	    trees = 0;
-	while (r < F->height) {
+	while (r + down < F->height) {
 		r += down;
 		c += right;
 		trees += map_get(F, r, c) == TREE;
