@@ -66,53 +66,12 @@ int *read_file(char *filename, int *N)
 	return nums;
 }
 
-void speak(int **spoken, int num, int *N)
+int memory_game(int *nums, int n, int turn_target)
 {
-	int n = *N;
-	*spoken = Realloc(*spoken, sizeof(int) * (++n));
-	(*spoken)[n-1] = num;
-	*N = n;
-}
+	int i, age, last, turn_said, say, turn;
 
-int find_index(int *spoken, int last, int N)
-{
-	int i;
-	for (i=1; i<N; i++) if (spoken[N-i-1] == last) break;
-	i = (i == N) ? -1 : N - i - 1;
-	return i;
-}
-
-int solution_part_one_v1(int *nums, int n, int turn_target)
-{
-	// > quadratic complexity using array.
-
-	int i, age, last, turn = n, N = 0;
-	int *spoken = NULL;
-	for (i=0; i<n; i++) speak(&spoken, nums[i], &N);
-
-	last = spoken[N-1];
-	turn = N+1;
-	while (turn <= turn_target) {
-		i = find_index(spoken, last, N);
-		if (i == -1) {
-			last = 0;
-		} else {
-			age = (turn - 1) - (i + 1);
-			last = age;
-		}
-		speak(&spoken, last, &N);
-		turn++;
-	}
-	free(spoken);
-	return last;
-}
-
-int solution_part_one_v2(int *nums, int n, int turn_target)
-{
-	// linear complexity using hash map
-	int i, age, last, turn_said, say, turn = n;
-
-	struct Map *m = init_map(); // map number -> turn last spoken
+	// map number -> turn last spoken
+	struct Map *m = init_map();
 
 	for (i=0; i<n-1; i++)
 		map_set(m, nums[i], i+1);
@@ -151,10 +110,10 @@ int main(int argc, char **argv)
 	int n, ans, *nums;
 	nums = read_file(argv[1], &n);
 
-	ans = solution_part_one_v2(nums, n, 2020);
+	ans = memory_game(nums, n, 2020);
 	printf("Solution part 1: %d\n", ans);
 
-	ans = solution_part_one_v2(nums, n, 30000000);
+	ans = memory_game(nums, n, 30000000);
 	printf("Solution part 2: %d\n", ans);
 
 	free(nums);
